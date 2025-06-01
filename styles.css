@@ -19,7 +19,7 @@ header {
   background-size: 400% 400%;
   animation: gradientBG 10s ease infinite;
   color: white;
-  padding: 2rem 1rem 1rem; /* Use 1rem horizontal padding for better mobile spacing */
+  padding: 2rem 1rem 1rem;
   text-align: center;
 }
 
@@ -73,7 +73,27 @@ nav a:hover {
 /* Hero */
 .hero {
   margin-top: 1rem;
-  padding: 0 1rem; /* Add padding for small screens */
+  padding: 0 1rem;
+}
+
+.hero-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hero-image img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Adjust text in hero section */
+.hero h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
 }
 
 .hero h1 span {
@@ -90,7 +110,7 @@ nav a:hover {
 main {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem; /* Add horizontal padding for small screens */
+  padding: 0 1rem;
 }
 
 .section {
@@ -246,7 +266,7 @@ footer {
   }
 
   .project-slider {
-    width: calc(100% * 6); /* 6 images, but container is 100% now */
+    width: calc(100% * 6);
   }
 
   .project-slider img {
@@ -256,6 +276,21 @@ footer {
 
   .section {
     padding: 1rem;
+  }
+}
+
+/* Responsive Hero Layout */
+@media (min-width: 769px) {
+  .hero-wrapper {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    text-align: left;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
   }
 }
 
