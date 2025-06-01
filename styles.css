@@ -19,7 +19,7 @@ header {
   background-size: 400% 400%;
   animation: gradientBG 10s ease infinite;
   color: white;
-  padding: 2rem 2rem 1rem;
+  padding: 2rem 1rem 1rem; /* Use 1rem horizontal padding for better mobile spacing */
   text-align: center;
 }
 
@@ -73,6 +73,7 @@ nav a:hover {
 /* Hero */
 .hero {
   margin-top: 1rem;
+  padding: 0 1rem; /* Add padding for small screens */
 }
 
 .hero h1 span {
@@ -89,12 +90,13 @@ nav a:hover {
 main {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 1rem; /* Add horizontal padding for small screens */
 }
 
 .section {
   padding: 2rem;
   background: white;
-  margin: 1rem;
+  margin: 1rem 0;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   opacity: 0;
@@ -169,7 +171,7 @@ main {
 /* Project Slider: sliding images horizontally */
 .project-slider {
   display: flex;
-  width: calc(320px * 6); /* 6 images (3 unique repeated twice) */
+  width: calc(320px * 6);
   animation: slide 18s linear infinite;
 }
 
@@ -182,12 +184,8 @@ main {
 
 /* Keyframe animation for horizontal sliding */
 @keyframes slide {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-960px); /* 3 images x 320px each */
-  }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-960px); }
 }
 
 /* Education */
@@ -234,39 +232,34 @@ footer {
   /* Projects stack vertically on small screens */
   .project {
     flex-direction: column;
-    gap: 0;  /* Remove gap between project details and slider */
+    gap: 1rem;
   }
 
   .project-details {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
-  }
-
-  .project-details > * {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
+    min-width: 100%;
   }
 
   .project-slider-wrapper {
     width: 100%;
     min-width: auto;
     height: 240px;
-    margin-top: 0 !important;
-    padding-top: 0 !important;
   }
 
-  .project-slider-wrapper > * {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
+  .project-slider {
+    width: calc(100% * 6); /* 6 images, but container is 100% now */
   }
 
   .project-slider img {
     width: 100%;
     height: 240px;
   }
+
+  .section {
+    padding: 1rem;
+  }
 }
 
 /* Large screen adjustments */
 @media (min-width: 1024px) {
-  /* Slider visible and inline as designed */
+  /* Optional additional styles for large screens */
 }
