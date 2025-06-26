@@ -290,39 +290,21 @@ footer {
   }
   /* Add this at the bottom of your styles.css */
 
-#demo-video {
-  text-align: center;
-  padding: 2rem;
-}
-
-#demo-video h2 {
-  margin-bottom: 1rem;
-}
-
-.video-container {
+/* Custom video inside project layout (same size as slider) */
+.video-wrapper {
   position: relative;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
-  height: 0;
   overflow: hidden;
-  max-width: 100%;
-  background: #000;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  background: black;
+  width: 320px;
+  height: 180px;
+  flex: 1 1 320px;
 }
 
-.video-container iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
+.project-video {
   width: 100%;
   height: 100%;
-}
-
-
-  .hero h1 {
-    font-size: 2.5rem;
-  }
-}
-
-/* Large screen adjustments */
-@media (min-width: 1024px) {
-  /* Optional additional styles for large screens */
+  object-fit: cover;
+  border-radius: 12px;
 }
