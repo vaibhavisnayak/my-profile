@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vaibhavi.nayak — ~/portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#0a0c11;
+    --bg-1:#10131a;
+    --bg-2:#161a23;
+    --bg-3:#1d222d;
+    --border:#242a36;
+    --border-soft:#1b202a;
+    --text-0:#e7e9ee;
+    --text-1:#aab0bd;
+    --text-2:#6b7280;
+    --amber:#e8a33d;
+    --teal:#5eead4;
+    --violet:#a78bfa;
+    --red:#f87171;
+    --green:#4ade80;
+    --mono:'IBM Plex Mono', ui-monospace, monospace;
+    --sans:'IBM Plex Sans', -apple-system, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg-0);
+    color:var(--text-0);
+    font-family:var(--sans);
+    font-size:15px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important; scroll-behavior:auto !important;} }
+
+  a{color:var(--teal); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  a:focus-visible, button:focus-visible, .file-item:focus-visible{outline:2px solid var(--amber); outline-offset:2px;}
+
+  ::selection{background:rgba(232,163,61,.28); color:var(--text-0);}
+
+  /* ---------- App shell ---------- */
+  .app{
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+  }
+
+  /* Title bar */
+  .titlebar{
+    height:38px;
+    background:var(--bg-1);
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    padding:0 14px;
+    gap:10px;
+    flex-shrink:0;
+    position:sticky; top:0; z-index:50;
+  }
+  .dots{display:flex; gap:7px;}
+  .dot{width:11px; height:11px; border-radius:50%;}
+  .dot.r{background:#f96a5f;} .dot.y{background:#f6bf4d;} .dot.g{background:#61c454;}
+  .titlebar-name{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-2);
+    margin-left:8px;
+  }
+  .titlebar-name b{color:var(--text-1); font-weight:500;}
+  
+  .design-mode-btn{
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--teal);
+    border: 1px solid var(--teal);
+    padding: 3px 9px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .design-mode-btn:hover{
+    background: var(--teal);
+    color: var(--bg-0);
+    text-decoration: none;
+  }
+
+  /* Body: sidebar + editor */
+  .body{
+    display:flex;
+    flex:1;
+    min-height:0;
+  }
+
+  /* Sidebar */
+  .sidebar{
+    width:250px;
+    flex-shrink:0;
+    background:var(--bg-1);
+    border-right:1px solid var(--border);
+    padding:18px 0 40px;
+    position:sticky;
+    top:38px;
+    height:calc(100vh - 38px);
+    overflow-y:auto;
+  }
+  .sidebar-header{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--text-2);
+    padding:0 18px 10px;
+  }
+  .file-tree{list-style:none;}
+  .file-item{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:7px 18px 7px 22px;
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--text-1);
+    cursor:pointer;
+    border-left:2px solid transparent;
+    background:none;
+    border-top:none; border-right:none; border-bottom:none;
+    width:100%;
+    text-align:left;
+  }
+  .file-item .ic{width:14px; text-align:center; font-size:11px; flex-shrink:0;}
+  .file-item:hover{background:var(--bg-2); color:var(--text-0);}
+  .file-item.active{
+    background:var(--bg-2);
+    color:var(--amber);
+    border-left-color:var(--amber);
+  }
+  .sidebar-foot{
+    margin-top:26px;
+    padding:14px 18px 0;
+    border-top:1px solid var(--border-soft);
+  }
+  .sidebar-foot-label{font-family:var(--mono); font-size:11px; color:var(--text-2); letter-spacing:.08em; text-transform:uppercase; margin-bottom:8px;}
+  .sidebar-links{display:flex; flex-direction:column; gap:7px;}
+  .sidebar-links a{font-family:var(--mono); font-size:12.5px; color:var(--text-1); display:flex; align-items:center; gap:7px;}
+  .sidebar-links a:hover{color:var(--teal);}
+
+  /* Tab bar */
+  .tabbar{
+    display:flex;
+    background:var(--bg-1);
+    border-bottom:1px solid var(--border);
+    overflow-x:auto;
+    flex-shrink:0;
+  }
+  .tab{
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--text-2);
+    padding:10px 16px;
+    border-right:1px solid var(--border-soft);
+    display:flex;
+    align-items:center;
+    gap:7px;
+    white-space:nowrap;
+    cursor:pointer;
+  }
+  .tab.active{color:var(--text-0); background:var(--bg-0); border-top:2px solid var(--amber); padding-top:8px;}
+  .tab .dot-unsaved{width:6px; height:6px; border-radius:50%; background:var(--text-2);}
+
+  /* Editor / main content */
+  .editor{
+    flex:1;
+    min-width:0;
+    display:flex;
+  }
+  .gutter{
+    width:46px;
+    flex-shrink:0;
+    background:var(--bg-0);
+    border-right:1px solid var(--border-soft);
+    text-align:right;
+    padding:40px 10px 0 0;
+    font-family:var(--mono);
+    font-size:12px;
+    color:#33394a;
+    user-select:none;
+    display:none;
+  }
+  @media(min-width:900px){ .gutter{display:block;} }
+  .pane{
+    flex:1;
+    min-width:0;
+    padding:0 0 120px;
+  }
+  section.file{
+    padding:64px clamp(20px,5vw,72px) 8px;
+    max-width:880px;
+    border-bottom:1px solid var(--border-soft);
+    scroll-margin-top:80px;
+  }
+  section.file:last-of-type{border-bottom:none;}
+  .file-path{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-2);
+    margin-bottom:26px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .file-path .sep{color:#333a47;}
+
+  /* Comment-style headers */
+  .comment{
+    font-family:var(--mono);
+    color:#5a6272;
+    font-size:13px;
+    margin-bottom:6px;
+  }
+  h1.hl, h2.hl{
+    font-family:var(--mono);
+    font-weight:600;
+    color:var(--text-0);
+    line-height:1.25;
+  }
+  h1.hl{font-size:clamp(28px,4vw,42px); letter-spacing:-.01em;}
+  h2.hl{font-size:22px; margin-bottom:22px;}
+  .kw{color:var(--violet);}
+  .str{color:var(--teal);}
+  .fn{color:var(--amber);}
+
+  p.lead{
+    color:var(--text-1);
+    font-size:16px;
+    max-width:62ch;
+    margin-top:16px;
+  }
+  p.body-text{color:var(--text-1); max-width:62ch; margin-top:14px;}
+
+  .badge-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:22px;}
+  .badge{
+    font-family:var(--mono);
+    font-size:12px;
+    padding:5px 10px;
+    border:1px solid var(--border);
+    border-radius:4px;
+    color:var(--text-1);
+    background:var(--bg-1);
+  }
+  .badge.amber{color:var(--amber); border-color:rgba(232,163,61,.35);}
+  .badge.teal{color:var(--teal); border-color:rgba(94,234,212,.3);}
+  .badge.violet{color:var(--violet); border-color:rgba(167,139,250,.3);}
+
+  /* Hero specific */
+  .hero-role{
+    font-family:var(--mono);
+    color:var(--amber);
+    font-size:14px;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .cursor-blink{
+    display:inline-block; width:8px; height:16px; background:var(--amber);
+    animation:blink 1.1s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0;}}
+  .cta-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:30px;}
+  .btn{
+    font-family:var(--mono);
+    font-size:13px;
+    padding:11px 18px;
+    border-radius:6px;
+    border:1px solid var(--border);
+    color:var(--text-0);
+    background:var(--bg-2);
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn:hover{text-decoration:none; border-color:var(--amber);}
+  .btn.primary{background:var(--amber); color:#1a1206; border-color:var(--amber); font-weight:600;}
+  .btn.primary:hover{background:#f0b458;}
+
+  /* Timeline (experience) */
+  .commit-line{border-left:2px solid var(--border); margin-left:6px; padding-left:26px; margin-top:20px;}
+  .commit{position:relative; padding-bottom:30px;}
+  .commit::before{
+    content:''; position:absolute; left:-33px; top:4px;
+    width:11px; height:11px; border-radius:50%;
+    background:var(--bg-0); border:2px solid var(--amber);
+  }
+  .commit-meta{font-family:var(--mono); font-size:12px; color:var(--text-2); margin-bottom:6px;}
+  .commit-title{font-family:var(--mono); font-size:15.5px; color:var(--text-0); font-weight:600;}
+  .commit ul{margin-top:10px; padding-left:18px; color:var(--text-1);}
+  .commit li{margin-bottom:6px;}
+  .commit li::marker{color:var(--amber);}
+  .confidential-note{
+    font-family:var(--mono); font-size:11.5px; color:var(--text-2);
+    margin-top:12px; padding:10px 12px; background:var(--bg-1); border:1px dashed var(--border); border-radius:6px;
+  }
+
+  /* Projects grid */
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-top:22px;}
+  .card{
+    background:var(--bg-1);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:20px;
+    display:flex; flex-direction:column;
+  }
+  .card:hover{border-color:var(--amber);}
+  .card-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+  .card-name{font-family:var(--mono); font-weight:600; color:var(--text-0); font-size:15px;}
+  .card-tag{font-family:var(--mono); font-size:10.5px; color:var(--bg-0); background:var(--teal); padding:2px 7px; border-radius:3px; white-space:nowrap;}
+  .card-desc{color:var(--text-1); font-size:13.5px; margin-top:10px; flex:1;}
+  .card-stack{display:flex; flex-wrap:wrap; gap:6px; margin-top:14px;}
+  .chip{font-family:var(--mono); font-size:11px; color:var(--text-2); border:1px solid var(--border-soft); padding:3px 7px; border-radius:4px;}
+
+  /* Research & Education Panels */
+  .paper-box, .edu-box{
+    background:var(--bg-1); border:1px solid var(--border); border-radius:8px; padding:24px; margin-top:20px;
+  }
+  .paper-title, .edu-title{font-family:var(--mono); font-size:16px; color:var(--text-0); font-weight:600; line-height:1.4;}
+  .paper-meta, .edu-meta{font-family:var(--mono); font-size:12px; color:var(--amber); margin-top:8px;}
+
+  /* Skills json */
+  pre.json{
+    font-family:var(--mono);
+    font-size:13px;
+    line-height:1.9;
+    color:var(--text-1);
+    background:var(--bg-1);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:22px 24px;
+    margin-top:20px;
+    overflow-x:auto;
+  }
+  pre.json .k{color:var(--teal);}
+  pre.json .v{color:var(--amber);}
+  pre.json .punct{color:var(--text-2);}
+
+  /* Contact terminal */
+  .terminal{
+    background:var(--bg-1); border:1px solid var(--border); border-radius:8px;
+    margin-top:22px; overflow:hidden;
+  }
+  .terminal-head{background:var(--bg-2); padding:9px 14px; font-family:var(--mono); font-size:11.5px; color:var(--text-2); border-bottom:1px solid var(--border);}
+  .terminal-body{padding:20px 22px; font-family:var(--mono); font-size:13.5px;}
+  .tline{margin-bottom:10px; color:var(--text-1);}
+  .prompt{color:var(--green); margin-right:8px;}
+  .tline a{color:var(--teal);}
+  .placeholder-flag{color:var(--text-2); font-style:italic;}
+
+  /* Status bar */
+  .statusbar{
+    height:26px;
+    background:var(--amber);
+    color:#1a1206;
+    font-family:var(--mono);
+    font-size:11.5px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 14px;
+    flex-shrink:0;
+    position:sticky; bottom:0; z-index:50;
+    font-weight:600;
+  }
+  .statusbar-left, .statusbar-right{display:flex; gap:16px; align-items:center;}
+
+  /* Mobile */
+  @media(max-width:820px){
+    .sidebar{position:fixed; left:-260px; top:38px; z-index:60; transition:left .2s ease; box-shadow:8px 0 24px rgba(0,0,0,.4);}
+    .sidebar.open{left:0;}
+    .menu-btn{display:flex;}
+    section.file{padding:44px 20px 8px;}
+  }
+  .menu-btn{
+    display:none; align-items:center; justify-content:center;
+    width:26px; height:26px; background:none; border:1px solid var(--border);
+    border-radius:4px; color:var(--text-1); font-family:var(--mono); font-size:14px; margin-right:4px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="titlebar">
+    <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+    <button class="menu-btn" id="menuBtn" aria-label="Toggle file explorer">☰</button>
+    <span class="titlebar-name"><b>vaibhavi-nayak</b> — portfolio — Editor Shell</span>
+    <a href="index.html" class="design-mode-btn">Design Mode</a>
+  </div>
+
+  <div class="body">
+    <nav class="sidebar" id="sidebar" aria-label="File explorer">
+      <div class="sidebar-header">Explorer</div>
+      <ul class="file-tree">
+        <li><button class="file-item" data-target="about"><span class="ic">◆</span>about.md</button></li>
+        <li><button class="file-item" data-target="achievements"><span class="ic">⭐</span>achievements.md</button></li>
+        <li><button class="file-item" data-target="experience"><span class="ic">{ }</span>experience.ts</button></li>
+        <li><button class="file-item" data-target="projects"><span class="ic">▸</span>projects/</button></li>
+        <li><button class="file-item" data-target="research"><span class="ic">¶</span>research.paper</button></li>
+        <li><button class="file-item" data-target="skills"><span class="ic">#</span>skills.json</button></li>
+        <li><button class="file-item" data-target="education"><span class="ic">🎓</span>education.txt</button></li>
+        <li><button class="file-item" data-target="contact"><span class="ic">$</span>contact.sh</button></li>
+      </ul>
+      <div class="sidebar-foot">
+        <div class="sidebar-foot-label">Connect</div>
+        <div class="sidebar-links">
+          <a href="https://github.com/vaibhavisnayak" target="_blank">↳ github.com/vaibhavisnayak</a>
+          <a href="https://www.linkedin.com/in/vaibhavisnayak/" target="_blank">↳ linkedin.com/in/vaibhavisnayak</a>
+          <a href="./Vaibhavi_Nayak_Resume.docx" download>↳ resume.docx</a>
+        </div>
+      </div>
+    </nav>
+
+    <div style="flex:1; min-width:0; display:flex; flex-direction:column;">
+      <div class="tabbar" id="tabbar">
+        <div class="tab active" data-target="about">◆ about.md</div>
+        <div class="tab" data-target="achievements">⭐ achievements.md</div>
+        <div class="tab" data-target="experience">{ } experience.ts</div>
+        <div class="tab" data-target="projects">▸ projects/</div>
+        <div class="tab" data-target="research">¶ research.paper</div>
+        <div class="tab" data-target="skills"># skills.json</div>
+        <div class="tab" data-target="education">🎓 education.txt</div>
+        <div class="tab" data-target="contact">$ contact.sh</div>
+      </div>
+
+      <div class="editor">
+        <div class="gutter" id="gutter"></div>
+        <div class="pane">
+
+          <!-- ABOUT -->
+          <section class="file" id="about">
+            <div class="file-path">~ <span class="sep">/</span> portfolio <span class="sep">/</span> about.md</div>
+            <div class="hero-role">$ whoami<span class="cursor-blink"></span></div>
+            <h1 class="hl">Vaibhavi S. Nayak</h1>
+            <p class="lead">MCA student at Manipal Institute of Technology (MAHE) | Software Developer | AI Enthusiast | Researcher</p>
+            <p class="body-text">I enjoy transforming ideas into scalable software solutions by combining modern web technologies, AI, and cloud platforms. My experience includes developing AI-powered applications, data visualization dashboards, serverless cloud solutions, Android applications, and research in FaaS optimization.</p>
+            <p class="body-text">Currently, I'm expanding my expertise in Large Language Models (LLMs), Retrieval-Augmented Generation (RAG), System Design, and Advanced Data Structures &amp; Algorithms while preparing for software engineering roles.</p>
+            <div class="badge-row">
+              <span class="badge amber">Generative AI / RAG</span>
+              <span class="badge teal">Full Stack Dev</span>
+              <span class="badge violet">FaaS Optimization</span>
+              <span class="badge">System Design</span>
+            </div>
+            <div class="cta-row">
+              <a class="btn primary" href="#contact">→ Contact Me</a>
+              <a class="btn" href="#projects">View projects</a>
+              <a class="btn" href="./Vaibhavi_Nayak_Resume.docx" download>↓ Download Resume</a>
+            </div>
+          </section>
+
+          <!-- ACHIEVEMENTS -->
+          <section class="file" id="achievements">
+            <div class="file-path">~ <span class="sep">/</span> portfolio <span class="sep">/</span> achievements.md</div>
+            <h2 class="hl"><span class="comment"># Star Achievements</span></h2>
+            <p class="body-text">A list of critical milestones and hackathon highlights:</p>
+            <div class="commit-line" style="margin-top: 15px;">
+              <div class="commit">
+                <div class="commit-meta">🏆 WitchHunt 2026 Winner</div>
+                <div class="commit-title">1st Place – Education Theme</div>
+                <p class="body-text" style="margin-top: 4px;">Competed against 6,000+ participants nationwide, qualifying in the Top 40 finalists and winning the top slot.</p>
+              </div>
+              <div class="commit">
+                <div class="commit-meta">💼 Ganglia Practice School</div>
+                <div class="commit-title">Software Development Internship</div>
+                <p class="body-text" style="margin-top: 4px;">Delivered key cross-platform mobile features, collaborative team developments, Git version controls, and LLM chat integrations.</p>
+              </div>
+              <div class="commit">
+                <div class="commit-meta">📄 Cloud Computation Research</div>
+                <div class="commit-title">Published Review Paper</div>
+                <p class="body-text" style="margin-top: 4px;">Formulated taxonomy of FaaS cold-start mitigation techniques targeting SN Computer Science.</p>
+              </div>
+              <div class="commit">
+                <div class="commit-meta">💻 LeetCode Problem Solving</div>
+                <div class="commit-title">Daily Challenge Solver</div>
+                <p class="body-text" style="margin-top: 4px;">Successfully finished LeetCode 75 with automated tracking cycles representing coding patterns.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- EXPERIENCE -->
+          <section class="file" id="experience">
+            <div class="file-path">~ <span class="sep">/</span> portfolio <span class="sep">/</span> experience.ts</div>
+            <h2 class="hl"><span class="kw">export const</span> <span class="fn">experience</span> = [</h2>
+            <div class="commit-line">
+              <div class="commit">
+                <div class="commit-meta">Jan 2026 — May 2026 · Manipal / Ganglia Technologies</div>
+                <div class="commit-title">Software Development Intern · Ganglia Technologies Pvt. Ltd.</div>
+                <p class="body-text" style="margin-top:8px;">MCA Practice School internship building the <strong>"Traveling App"</strong> — a cross-platform React Native travel application.</p>
+                <ul>
+                  <li>Collaborated on real-world application structures using Agile workflows.</li>
+                  <li>Built features for real-time group GPS tracking and location sharing.</li>
+                  <li>Worked on GI (Geographical Indication) cultural product discovery and safety-alert functionality.</li>
+                  <li>Handled debugging, feature deployment, testing, and version control using Git.</li>
+                </ul>
+                <div class="confidential-note">// project name and scope shown here are the disclosure-approved public description — full implementation details are under NDA</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- PROJECTS -->
+          <section class="file" id="projects">
+            <div class="file-path">~ <span class="sep">/</span> portfolio <span class="sep">/</span> projects</div>
+            <h2 class="hl"><span class="kw">ls</span> <span class="str">./projects</span></h2>
+            <div class="grid">
+              <div class="card">
+                <div class="card-top">
+                  <span class="card-name">CallSakhi</span>
+                  <span class="card-tag">Voice AI</span>
+                </div>
+                <p class="card-desc">Voice-based AI tutor for Class 10 Science students in rural India, delivered entirely over basic phone calls — no internet or smartphone required.</p>
+                <div class="card-stack">
+                  <span class="chip">Twilio</span><span class="chip">FastAPI</span><span class="chip">Llama 3.1 8B</span><span class="chip">Groq</span><span class="chip">MongoDB Vector</span><span class="chip">Supabase</span>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-top">
+                  <span class="card-name">Problem Solver</span>
+                  <span class="card-tag">Civic Tech</span>
+                </div>
+                <p class="card-desc">Civic issue reporting and AI-categorization platform for Bangalore municipal wards, with gamified community participation. Built for the vibe2ship hackathon.</p>
+                <div class="card-stack">
+                  <span class="chip">Gemini 2.0 Flash</span><span class="chip">Firebase</span><span class="chip">MapLibre GL JS</span><span class="chip">JavaScript</span>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-top">
+                  <span class="card-name">Redrob Aawaz</span>
+                  <span class="card-tag">Voice AI</span>
+                </div>
+                <p class="card-desc">An extension of the CallSakhi voice AI tutor architecture, built for the Redrob INDIA.RUNS Ideathon.</p>
+                <div class="card-stack">
+                  <span class="chip">Twilio</span><span class="chip">Groq</span><span class="chip">RAG Pipelines</span><span class="chip">MongoDB</span><span class="chip">Supabase</span>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-top">
+                  <span class="card-name">NoteBuddy</span>
+                  <span class="card-tag">Mobile</span>
+                </div>
+                <p class="card-desc">Android application with SQLite local storage, Material Design, and password-protected notes interface.</p>
+                <div class="card-stack">
+                  <span class="chip">Android Studio</span><span class="chip">Java</span><span class="chip">SQLite</span><span class="chip">Material Design</span>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-top">
+                  <span class="card-name">Weather Forecast</span>
+                  <span class="card-tag">Web App</span>
+                </div>
+                <p class="card-desc">Weather forecasting app pulling real-time metrics with Matplotlib charts showing temperature trends.</p>
+                <div class="card-stack">
+                  <span class="chip">Python</span><span class="chip">Flask</span><span class="chip">OpenWeatherMap API</span><span class="chip">Matplotlib</span>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-top">
+                  <span class="card-name">Superstore Dashboard</span>
+                  <span class="card-tag">Analytics</span>
+                </div>
+                <p class="card-desc">Business intelligence dashboard visualizing superstore sales metrics, profit trends, and geographic distributions.</p>
+                <div class="card-stack">
+                  <span class="chip">Tableau</span><span class="chip">BI</span><span class="chip">Sales Analytics</span>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-top">
+                  <span class="card-name">Repo Intelligence</span>
+                  <span class="card-tag">Flagship AI</span>
+                </div>
+                <p class="card-desc">Coming Soon project targeting commit histories, code distributions, and git logs tracking using LLM intelligence.</p>
+                <div class="card-stack">
+                  <span class="chip">Node.js</span><span class="chip">Express</span><span class="chip">Git API</span><span class="chip">Generative AI</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- RESEARCH -->
+          <section class="file" id="research">
+            <div class="file-path">~ <span class="sep">/</span> portfolio <span class="sep">/</span> research.paper</div>
+            <h2 class="hl"><span class="comment" style="font-size:22px;">/** research **/</span></h2>
+            <div class="paper-box">
+              <div class="paper-title">A Systematic Review of Cold-Start Latency Mitigation in FaaS Platforms</div>
+              <div class="badge-row" style="margin-top:16px;">
+                <span class="badge">Serverless Computing</span>
+                <span class="badge">Resource Scheduling</span>
+                <span class="badge">Edge Computing</span>
+                <span class="badge">Performance Optimization</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- SKILLS -->
+          <section class="file" id="skills">
+            <div class="file-path">~ <span class="sep">/</span> portfolio <span class="sep">/</span> skills.json</div>
+            <h2 class="hl"><span class="punct">{</span></h2>
+<pre class="json"><span class="punct">{</span>
+  <span class="k">"ai_ml"</span><span class="punct">:</span> [<span class="v">"OpenAI GPT"</span>, <span class="v">"Gemini Pro / 2.0 Flash"</span>, <span class="v">"Groq (Llama 3.1)"</span>, <span class="v">"RAG pipelines"</span>, <span class="v">"Vector Search"</span>, <span class="v">"Prompt Engineering"</span>],
+  <span class="k">"languages"</span><span class="punct">:</span> [<span class="v">"C"</span>, <span class="v">"C++"</span>, <span class="v">"Java"</span>, <span class="v">"Python"</span>, <span class="v">"JavaScript"</span>, <span class="v">"TypeScript"</span>, <span class="v">"PHP"</span>, <span class="v">"SQL"</span>, <span class="v">"Dart"</span>],
+  <span class="k">"frontend"</span><span class="punct">:</span> [<span class="v">"React Native"</span>, <span class="v">"React"</span>, <span class="v">"HTML5"</span>, <span class="v">"CSS3"</span>, <span class="v">"Bootstrap"</span>],
+  <span class="k">"backend"</span><span class="punct">:</span> [<span class="v">"FastAPI"</span>, <span class="v">"Node.js"</span>, <span class="v">"Express"</span>, <span class="v">"Flask"</span>, <span class="v">"Azure Functions"</span>],
+  <span class="k">"databases"</span><span class="punct">:</span> [<span class="v">"MongoDB"</span>, <span class="v">"Supabase"</span>, <span class="v">"Firebase Firestore"</span>, <span class="v">"Oracle SQL"</span>, <span class="v">"MySQL"</span>, <span class="v">"SQLite"</span>],
+  <span class="k">"tools"</span><span class="punct">:</span> [<span class="v">"Git"</span>, <span class="v">"GitHub"</span>, <span class="v">"VS Code"</span>, <span class="v">"Android Studio"</span>, <span class="v">"Tableau"</span>, <span class="v">"Postman"</span>]
+<span class="punct">}</span></pre>
+          </section>
+
+          <!-- EDUCATION -->
+          <section class="file" id="education">
+            <div class="file-path">~ <span class="sep">/</span> portfolio <span class="sep">/</span> education.txt</div>
+            <h2 class="hl"><span class="comment"># Academic Credentials</span></h2>
+            <div class="edu-box">
+              <div class="edu-title">Master's in Computer Applications (MCA)</div>
+              <div class="edu-meta">Manipal Institute of Technology (MAHE) · 2024 – 2026</div>
+              <p class="body-text" style="margin-top: 8px;"><strong>CGPA: 8.71 / 10.0</strong></p>
+            </div>
+            <div class="edu-box">
+              <div class="edu-title">Bachelor's in Computer Applications (BCA)</div>
+              <div class="edu-meta">MGM College, Udupi · 2021 – 2024</div>
+              <p class="body-text" style="margin-top: 8px;"><strong>CGPA: 9.44 / 10.0</strong></p>
+            </div>
+          </section>
+
+          <!-- CONTACT -->
+          <section class="file" id="contact">
+            <div class="file-path">~ <span class="sep">/</span> portfolio <span class="sep">/</span> contact.sh</div>
+            <h2 class="hl"><span class="kw">#!/bin/bash</span></h2>
+            <p class="body-text">Open to Software Developer, Generative AI, RAG, and Full Stack roles.</p>
+            <div class="terminal">
+              <div class="terminal-head">bash — contact.sh</div>
+              <div class="terminal-body">
+                <div class="tline"><span class="prompt">$</span> cat email.txt</div>
+                <div class="tline" style="color:var(--text-0);">vaibhavisnayak@gmail.com</div>
+                <div class="tline"><span class="prompt">$</span> open github</div>
+                <div class="tline"><a href="https://github.com/vaibhavisnayak" target="_blank">github.com/vaibhavisnayak</a></div>
+                <div class="tline"><span class="prompt">$</span> open linkedin</div>
+                <div class="tline"><a href="https://www.linkedin.com/in/vaibhavisnayak/" target="_blank">linkedin.com/in/vaibhavisnayak</a></div>
+                <div class="tline"><span class="prompt">$</span> echo $LOCATION</div>
+                <div class="tline" style="color:var(--text-0);">Manipal / Mysuru, Karnataka, India</div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="statusbar">
+    <div class="statusbar-left">
+      <span>⎇ main</span>
+      <span id="statusSection">about.md</span>
+    </div>
+    <div class="statusbar-right">
+      <span>UTF-8</span>
+      <span>Markdown</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const sections = ['about', 'achievements', 'experience', 'projects', 'research', 'skills', 'education', 'contact'];
+  const fileItems = document.querySelectorAll('.file-item');
+  const tabs = document.querySelectorAll('.tab');
+  const statusSection = document.getElementById('statusSection');
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menuBtn');
+  
+  const labels = {
+    about: 'about.md', 
+    achievements: 'achievements.md',
+    experience: 'experience.ts', 
+    projects: 'projects/', 
+    research: 'research.paper', 
+    skills: 'skills.json', 
+    education: 'education.txt',
+    contact: 'contact.sh'
+  };
+
+  function setActive(id){
+    fileItems.forEach(f => f.classList.toggle('active', f.dataset.target === id));
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.target === id));
+    statusSection.textContent = labels[id] || id;
+  }
+
+  function goTo(id){
+    const el = document.getElementById(id);
+    if(el) {
+      el.scrollIntoView({behavior:'smooth', block:'start'});
+      setActive(id);
+    }
+    sidebar.classList.remove('open');
+  }
+
+  fileItems.forEach(el => el.addEventListener('click', () => goTo(el.dataset.target)));
+  tabs.forEach(el => el.addEventListener('click', () => goTo(el.dataset.target)));
+
+  menuBtn.addEventListener('click', () => sidebar.classList.toggle('open'));
+
+  // scroll-spy
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){ setActive(entry.target.id); }
+    });
+  }, {rootMargin: '-30% 0px -60% 0px', threshold: 0});
+  
+  sections.forEach(id => { 
+    const el = document.getElementById(id); 
+    if(el) observer.observe(el); 
+  });
+
+  // gutter line numbers
+  const gutter = document.getElementById('gutter');
+  if(gutter) {
+    let lines = '';
+    for(let i=1; i<=140; i++){ lines += i + '\n'; }
+    gutter.textContent = lines;
+  }
+</script>
+</body>
+</html>
